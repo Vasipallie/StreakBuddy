@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'"
+    />
+    <meta
+      http-equiv="X-Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'"
+    />
+    <title>StreakBuddy</title>
+    <style>
+      @font-face {
+        font-family: "geomanist";
+        src: url("./geom.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+      }
+      html,body{
+        height: 100%;
+        margin:0;
+      }
+        body{
+          display: flex;
+          flex-direction: column;
+            width: 100%;
+            height:100%;
+            margin:0;
+            padding: 0;
+            font-family:'geomanist';
+        }
+        span{
+            font-family:"geomanist";
+        }
+        .status{
+          display:flex;
+          justify-content: space-between;
+          flex-shrink: 0;
+          padding:0.2em 0.4em;
+          font-size: 1.3em;
+          color:#ffffff;
+          
+        }
+        .left{
+          justify-content:left;
+        }
+        .right{
+          justify-self: right;
+        }
+        .main{
+          padding:0.2em;
+          box-sizing: border-box;
+          flex:1;
+          min-height: 0;
+          width: 100%;
+          background-color: #B1EAFF;
+        }
+        h1,h2,h3,h4,h5{
+          margin: 0;
+          padding: 0;
+          line-height: 1;
+        }
+        h1{
+          font-size: 3em;
+        }
+        .itemic{
+          
+        }
+        .itemo{
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: absolute;
+          right:1em;
+          bottom:1em;
+          width: 4em;
+          height: 4em;
+          box-sizing: border-box;
+          border-radius: 50%;
+          background-color: #00AAF1;
+          text-decoration: none;
+          overflow: hidden;
+        }
+        .itemo img{
+          width: 3.5em;
+          height: 3.5em;
+        }
+
+    </style>
+  </head>
+  <body>
+    <div class="status">
+        <span id="time" class="left">00:00am</span>
+        <span id="date" class="right">00th January 0000</span>
+    </div>
+    <div class="main">
+      <h1 id="stage">Stage 0</h1>
+      <span id="stagetec">Unhatched Seed</span>
+
+      <div class="itemic"></div>
+      <a class="itemo" href="setting.html">
+        <img src="setting.svg">
+      </a>
+    </div>
+    <script>
+      var times = document.getElementById('time');
+      var date = document.getElementById('date');
+
+      function time(){
+        var current = new Date();
+        var minutes = current.getMinutes();
+        var hours = current.getHours();
+        var suffix = hours >= 12 ? "pm" : "am";
+
+        hours = hours % 12 || 12;
+        times.textContent = ("0" + hours).substr(-2) + ":" + ("0" + minutes).substr(-2) + suffix;
+      }
+      function dat(){
+        var currentDate = new Date();
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', "July", 'August', 'September', 'October', 'November', 'December'];
+        date.textContent = currentDate.getDate() + " " + months[currentDate.getMonth()] + " " + currentDate.getFullYear();
+      }
+      dat()
+      time();
+      setInterval(time, 1000);
+    </script>
+  </body>
+</html>

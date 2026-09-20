@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'"
+    />
+    <meta
+      http-equiv="X-Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'"
+    />
+    <title>StreakBuddy</title>
+    <style>
+      @font-face {
+        font-family: "geomanist";
+        src: url("./geom.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+      }
+      html,body{
+        height: 100%;
+        margin:0;
+      }
+        body{
+          display: flex;
+          flex-direction: column;
+            width: 100%;
+            height:100%;
+            margin:0;
+            padding: 0;
+            font-family:'geomanist';
+        }
+        span{
+            font-family:"geomanist";
+        }
+        .status{
+          display:flex;
+          justify-content: space-between;
+          flex-shrink: 0;
+          padding:0.2em 0.4em;
+          font-size: 1.3em;
+          color:#ffffff;
+          
+        }
+        .left{
+          justify-content:left;
+        }
+        .right{
+          justify-self: right;
+        }
+        .main{
+          padding:0.2em;
+          box-sizing: border-box;
+          flex:1;
+          min-height: 0;
+          width: 100%;
+          background-color: #B1EAFF;
+        }
+        h1,h2,h3,h4,h5{
+          margin: 0;
+          padding: 0;
+          line-height: 1;
+        }
+        h1{
+          font-size: 3em;
+        }
+        .itemo{
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: absolute;
+          right:1em;
+          bottom:1em;
+          width: 4em;
+          height: 4em;
+          box-sizing: border-box;
+          border-radius: 50%;
+          background-color: #00AAF1;
+          text-decoration: none;
+          overflow: hidden;
+        }
+        .itemo img{
+          width: 3.5em;
+          height: 3.5em;
+        }
+        .mainta{
+            background-color: #00AAF1;
+            width: 100%;
+            justify-content: center;
+            padding:0.1em;
+            border-radius: 0.4em;
+            color:#ffffff;
+            box-sizing: border-box;
+            height: fit-content;
+            margin-top: 0.5em;
+        }
+        .mainta p{
+            font-size: 1.5em;
+            font-weight: 900;
+            line-height: 1;
+            margin: 0;
+            padding: 0;
+            padding-block:0.2em;
+
+
+        }
+        .info{
+          display: flex;
+          flex-direction: column;
+          gap: 0.5em;
+            width:100%;
+            min-height: 2em;
+            background-color: #fcfcfc;
+            border-radius:0.4em;
+            color: #000;
+            font-size: 0.9em;
+            line-height: 1em;
+            padding: 0.2em;
+            height: fit-content;
+            box-sizing: border-box;
+        }
+          .info p{
+            margin: 0;
+          }
+        .inbtn{
+            display: inline-block;
+            align-self: flex-start;
+            background-color: #00AAF1;
+            text-decoration: none;
+            color:#ffffff;
+            border-radius: 0.4em;
+            padding:0.5em;
+            line-height: 1;
+
+        }
+    </style>
+  </head>
+  <body>
+    <div class="status">
+        <span id="time" class="left">00:00am</span>
+        <span id="date" class="right">00th January 0000</span>
+    </div>
+    <div class="main">
+        <h1>Settings</h1>
+        <div class="mainta">
+            <p>Hackatime Linkage</p>
+            <div class="info">
+              <span>Link your Hackatime account to effectively track your time on StreakBuddy. Click the button below to link your account via the official Hackatime gateway.</span>
+            <a class="inbtn" href="">Link Hackatime</a>
+            </div>
+        </div>
+
+      <a class="itemo" href="index.html">
+        <img src="home.svg">
+      </a>
+    </div>
+    <script>
+      var times = document.getElementById('time');
+      var date = document.getElementById('date');
+
+      function time(){
+        var current = new Date();
+        var minutes = current.getMinutes();
+        var hours = current.getHours();
+        var suffix = hours >= 12 ? "pm" : "am";
+
+        hours = hours % 12 || 12;
+        times.textContent = ("0" + hours).substr(-2) + ":" + ("0" + minutes).substr(-2) + suffix;
+      }
+      function dat(){
+        var currentDate = new Date();
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', "July", 'August', 'September', 'October', 'November', 'December'];
+        date.textContent = currentDate.getDate() + " " + months[currentDate.getMonth()] + " " + currentDate.getFullYear();
+      }
+      dat()
+      time();
+      setInterval(time, 1000);
+    </script>
+  </body>
+</html>
