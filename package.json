@@ -15,9 +15,31 @@
   "main": "index.js",
   "scripts": {
     "start": "electron .",
+    "dist": "electron-builder",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "build": {
+    "appId": "com.pharmer.app",
+    "productName": "Pharmer",
+    "files": [
+      "index.js",
+      "src/**/*",
+      "icons/**/*",
+      "package.json"
+    ],
+    "win": {
+      "icon": "icons/win/icon.ico"
+    },
+    "mac": {
+      "icon": "icons/mac/icon.icns"
+    },
+    "linux": {
+      "icon": "icons/png"
+    }
+  },
   "devDependencies": {
-    "electron": "^44.4.3"
+    "electron": "^44.4.3",
+    "electron-builder": "^26.0.12",
+    "electron-icon-builder": "^2.0.1"
   }
 }
