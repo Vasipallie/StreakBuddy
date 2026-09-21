@@ -22,6 +22,7 @@
     "appId": "com.pharmer.app",
     "productName": "Pharmer",
     "files": [
+      ".env",
       "index.js",
       "src/**/*",
       "icons/**/*",
@@ -41,5 +42,9 @@
     "electron": "^44.4.3",
     "electron-builder": "^26.0.12",
     "electron-icon-builder": "^2.0.1"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.1",
+    "express": "^5.2.1"
   }
 }

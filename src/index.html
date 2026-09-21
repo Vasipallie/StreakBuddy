@@ -5,11 +5,11 @@
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'"
+      content="default-src 'self'; connect-src 'self' http://localhost:5000; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'"
     />
     <meta
       http-equiv="X-Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'"
+      content="default-src 'self'; connect-src 'self' http://localhost:5000; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'"
     />
     <title>StreakBuddy</title>
     <style>
@@ -126,7 +126,7 @@
       <h1 id="stage">Stage 0</h1>
       <span id="stagetec">Unhatched Seed</span>
       <div class="loadhold">
-        <div class="load"></div>
+        <div id="load" class="load"></div>
       </div>
       <div class="placeh">
         <span id="current" class="lef">0.0 hrs</span>
@@ -160,6 +160,70 @@
       dat()
       time();
       setInterval(time, 1000);
+
+      function updateProgBar(current, final){
+        var load = document.getElementById('load');
+        var percentage = (current / final)*100;
+        if (final <= 0) {
+          load.style.width = '0%';
+          return;
+        }
+        load.style.width = Math.min(percentage, 100) + "%";
+      }
+      function updateStage(stage, stagetec){
+        var stageel = document.getElementById('stage');
+        var stagetecel = document.getElementById('stagetec');
+        stageel.textContent = "Stage " + stage;
+        stagetecel.textContent = stagetec;
+      }
+      function updateSummary(currentHours, label){
+        var currentel = document.getElementById('current');
+        var finalel = document.getElementById('final');
+        currentel.textContent = Number(currentHours || 0).toFixed(1) + ' hrs';
+        finalel.textContent = label || 'Last 7 Days';
+      }
+      function retriveHackandUp(){
+        const cur = document.getElementById('current');
+        const fin = document.getElementById('final');
+        fetch('http://localhost:5000/hackdata')
+        .then(response => response.json())
+        .then(data => {
+          const stages = {
+            0: "Unhatched Seed",
+            1: "Sprouting Seed",
+            2: "Overly Excited Seedling",
+            3: "Budding Plant",
+            4: "Crackling Seed",
+            5: "Sprouts",
+            6: "Young Plant",
+            7: "Budding Flower",
+            8: "Blooming Flower",
+            9: "Full Bloom",
+          }
+          const imgs = {
+            0: "art/1.png",
+            1: "art/2.png",
+            2: "art/3.png",
+            3: "art/4.png",
+            4: "art/5.png",
+            5: "art/6.png",
+            6: "art/7.png",
+            7: "art/8.png",
+            8: "art/9.png",
+            9: "art/10.png",
+          }
+          const finalhr = [0.5, 1, 1.6, 2.5, 3.8, 5.5, 7, 8, 10]
+          const stage = Number(data.stage ?? 0)
+          const weeklyHours = Number(data.current || 0)
+          const stageGoal = Number(finalhr[stage] ?? 0.5)
+          updateStage(stage, stages[stage] || "Unhatched Seed")
+          updateSummary(weeklyHours, 'Last 7 Days')
+          updateProgBar(weeklyHours, Math.max(stageGoal, weeklyHours > 0 ? weeklyHours : 0.5))
+        })
+        .catch(error => {
+          console.error('Failed to load Hackatime data:', error)
+        })
+      }
     </script>
   </body>
 </html>
