@@ -183,10 +183,13 @@
         finalel.textContent = label || 'Last 7 Days';
       }
       function retriveHackandUp(){
-        const cur = document.getElementById('current');
-        const fin = document.getElementById('final');
         fetch('http://localhost:5000/hackdata')
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Hackatime request failed: ${response.status}`)
+          }
+          return response.json()
+        })
         .then(data => {
           const stages = {
             0: "Unhatched Seed",
@@ -219,11 +222,20 @@
           updateStage(stage, stages[stage] || "Unhatched Seed")
           updateSummary(weeklyHours, 'Last 7 Days')
           updateProgBar(weeklyHours, Math.max(stageGoal, weeklyHours > 0 ? weeklyHours : 0.5))
+          document.querySelector('.itemic img').src = imgs[stage] || imgs[0]
         })
         .catch(error => {
           console.error('Failed to load Hackatime data:', error)
         })
       }
+
+      retriveHackandUp();
+      window.addEventListener('focus', retriveHackandUp);
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+          retriveHackandUp();
+        }
+      });
     </script>
   </body>
 </html>
