@@ -10,6 +10,35 @@ const server = express()
 const PORT = 5000
 const UID = process.env.UID || process.env.hackatimeuid || process.env.HACKATIME_UID
 const SECRET = process.env.SECRET || process.env.hackatimesecret || process.env.HACKATIME_SECRET
+const legacyTokenFile = path.join(__dirname, 'StreakBuddy_AccessToken.txt')
+
+function getTokenFile() {
+  return path.join(app.getPath('userData'), 'StreakBuddy_AccessToken.txt')
+}
+
+function readAccessToken() {
+  const configuredToken = process.env.HACKATIME_ACCESS_TOKEN
+  if (configuredToken) {
+    return configuredToken.trim()
+  }
+
+  const tokenFiles = [
+    getTokenFile(),
+    legacyTokenFile,
+    path.join(process.cwd(), 'StreakBuddy_AccessToken.txt'),
+    path.join(path.dirname(process.execPath), 'StreakBuddy_AccessToken.txt'),
+    path.join(process.resourcesPath || __dirname, 'StreakBuddy_AccessToken.txt'),
+    path.join(process.resourcesPath || __dirname, '..', 'StreakBuddy_AccessToken.txt')
+  ]
+
+  for (const tokenFile of [...new Set(tokenFiles)]) {
+    if (fs.existsSync(tokenFile)) {
+      return fs.readFileSync(tokenFile, 'utf8').trim()
+    }
+  }
+
+  return ''
+}
 
 if (!UID || !SECRET) {
   console.warn('Missing Hackatime credentials. Check .env for UID/SECRET or hackatimeuid/hackatimesecret.')
@@ -54,6 +83,10 @@ server.get('/api/health', (req, res) => {
 })
 
 server.get('/hackauth', (req, res) => {
+  if (readAccessToken()) {
+    return res.redirect('/authored')
+  }
+
   if (!UID || !SECRET) {
     return res.status(500).send('Hackatime credentials are missing. Add UID/SECRET to your .env file.')
   }
@@ -95,7 +128,8 @@ server.get('/hackauth/c', async (req, res) => {
       throw new Error(tokenData.error_description || tokenData.error || 'Missing access token from Hackatime.')
     }
 
-    fs.writeFileSync(path.join(__dirname, 'StreakBuddy_AccessToken.txt'), accessToken)
+    fs.mkdirSync(path.dirname(getTokenFile()), { recursive: true })
+    fs.writeFileSync(getTokenFile(), accessToken, 'utf8')
     res.redirect('/authored')
   } catch (error) {
     console.error('Hackatime auth failed:', error)
@@ -104,13 +138,7 @@ server.get('/hackauth/c', async (req, res) => {
 })
 
 server.get('/hackdata', async (req, res) => {
-  const tokenFile = path.join(__dirname, 'StreakBuddy_AccessToken.txt')
-
-  if (!fs.existsSync(tokenFile)) {
-    return res.json({ current: 0, final: 0.5, stage: 0 })
-  }
-
-  const token = fs.readFileSync(tokenFile, 'utf8').trim()
+  const token = readAccessToken()
 
   if (!token) {
     return res.json({ current: 0, final: 0.5, stage: 0 })
